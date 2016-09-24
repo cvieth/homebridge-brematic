@@ -1,0 +1,30 @@
+{
+  "name": "homebridge-brematic",
+  "version": "0.0.1",
+  "description": "Brennenstuhl Brematic Plugin for homebridge: https://github.com/nfarina/homebridge",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cvieth/homebridge-brematic.git"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "brennenstuhl",
+    "brematic",
+    "connair",
+    "433MHz"
+  ],
+  "author": {
+    "name": "Christoph Vieth",
+    "email": "christoph@vieth.me",
+    "url": "http://www.falkens-laboratory.de/"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cvieth/homebridge-brematic/issues"
+  },
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.2.0"
+  }
+}
