@@ -13,8 +13,10 @@ function encodeMessage(system, unit, state) {
 
     var HEAD = "TXP:" + sA + "," + sG + "," + sRepeat + "," + sPause + "," + sTune + "," + sBaud + ",";
 
-    var TAIL = ",1,1," + sSpeed + ",;";
-    //var TAIL = ",3,1," + sSpeed + ",;";
+    //var TAIL = ",1,1," + sSpeed + ",;";
+    var TAIL = ",3,1," + sSpeed + ",;";
+    var TAILAN = ",1,1," + sSpeed + ",;";
+    var TAILAUS = ",3,1," + sSpeed + ",;";
     var AN = "1,3,1,3,3";
     var AUS = "3,1,1,3,1";
 
@@ -48,10 +50,10 @@ function encodeMessage(system, unit, state) {
     }
     var msgU = msg;
 
-    if (state = "on") {
-        var message = HEAD + bitLow + "," + msgM + msgU + bitHigh + "," + AN + TAIL;
+    if (state == "on") {
+        var message = HEAD + bitLow + "," + msgM + msgU + bitHigh + "," + AN + TAILAN;
     } else {
-        var message = HEAD + bitLow + "," + msgM + msgU + bitHigh + "," + AUS + TAIL;
+        var message = HEAD + bitLow + "," + msgM + msgU + bitHigh + "," + AN + TAILAUS;
     }
     return message;
 }
