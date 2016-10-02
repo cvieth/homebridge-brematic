@@ -76,6 +76,7 @@ function brematicAccessory(log, config) {
     accessory.name = config.name;
     accessory.host = config.host;
     accessory.port = config.port;
+    accessory.vendor = config.vendor;
     accessory.device = config.device;
     accessory.systemCode = config.systemCode;
     accessory.unitCode = config.unitCode;

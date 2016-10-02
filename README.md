@@ -25,6 +25,7 @@ Brematic Switches will be configured as accessories in your homebridge configura
 |name |yes | - |Name of the Device |
 |host |yes | - |Hostname of your gateway |
 |port |yes | - |Port of your gateway, usually 49880 |
+|vendor |yes | - |Name of vendor (See Supported Devices) |
 |device |yes | - |Name of device (See Supported Devices) |
 |systemCode |yes | - |System Code Address (5 Bit) |
 |unitCode |yes | - |Unit Code Address (5 Bit) |
@@ -32,6 +33,7 @@ Brematic Switches will be configured as accessories in your homebridge configura
 
 ## Example:
 ```json
+{
  "bridge": {
     "name": "Homebridge",
     "username": "CC:22:3D:E3:CE:30",
@@ -46,11 +48,13 @@ Brematic Switches will be configured as accessories in your homebridge configura
       "name": "Example Switch",
       "host": "192.168.0.100",
       "port": 49880,
-      "device": "Brennenstuhl RCS1000N",
+      "vendor": "Brennenstuhl",
+      "device": "RCS1000N",
       "systemCode": "00000",
       "unitCode": "00000" 
     }
   ]
+}
 ```
 
 # Supported Devices
