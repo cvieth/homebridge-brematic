@@ -69,24 +69,27 @@ module.exports = function (homebridge) {
 function brematicAccessory(log, config) {
     var accessory = this;
 
-    this.log = log;
-    this.log("Initializing Brematic accessory ...");
+    accessory.log = log;
+    accessory.log("Initializing Brematic accessory ...");
 
-    this.service = 'Switch';
-
-    // Fetch Configruration
-    this.name = config.name;
-    this.host = config.host;
-    this.port = config.port;
-    this.device = config.device;
-    this.systemCode = config.systemCode;
-    this.unitCode = config.unitCode;
+    // Fetch Configuration
+    accessory.name = config.name;
+    accessory.host = config.host;
+    accessory.port = config.port;
+    accessory.device = config.device;
+    accessory.systemCode = config.systemCode;
+    accessory.unitCode = config.unitCode;
 
     /**
      * Enable or disable verbose output
      * @type {boolean}
      */
-    accessory.verbose = true;
+    if (config.hasOwnProperty('enableVerbose') && config.enableVerbose === true) {
+        accessory.verbose = true;
+    } else {
+        accessory.verbose = false;
+    }
+
 
     /**
      * Current state of accessory

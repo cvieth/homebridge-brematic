@@ -19,15 +19,16 @@ should be installed "globally" by typing:
 
 Brematic Switches will be configured as accessories in your homebridge configuration.
 
-| Name | Description |
-| --- | --- |
-| accessory | Must be set to "Brematic" |
-| name | Name of the Device |
-| host | Hostname of your gateway |
-| port | Port of your gateway, usually 49880 |
-| device | Name of device (See Supported Devices) |
-| systemCode | System Code Address (5 Bit) |
-| unitCode | Unit Code Address (5 Bit) |
+| Name | Mandetory | Default | Description |
+| --- | --- | --- | --- |
+|accessory |yes | - |Must be set to "Brematic" |
+|name |yes | - |Name of the Device |
+|host |yes | - |Hostname of your gateway |
+|port |yes | - |Port of your gateway, usually 49880 |
+|device |yes | - |Name of device (See Supported Devices) |
+|systemCode |yes | - |System Code Address (5 Bit) |
+|unitCode |yes | - |Unit Code Address (5 Bit) |
+|enableVerbose |no | `false` | Set to `true` to enable verbose mode |
 
 ## Example:
 ```json
