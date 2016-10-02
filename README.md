@@ -19,17 +19,17 @@ should be installed "globally" by typing:
 
 Brematic Switches will be configured as accessories in your homebridge configuration.
 
-| Name | Mandetory | Default | Description |
-| --- | --- | --- | --- |
-|accessory |yes | - |Must be set to "Brematic" |
-|name |yes | - |Name of the Device |
-|host |yes | - |Hostname of your gateway |
-|port |yes | - |Port of your gateway, usually 49880 |
-|vendor |yes | - |Name of vendor (See Supported Devices) |
-|device |yes | - |Name of device (See Supported Devices) |
-|systemCode |yes | - |System Code Address (5 Bit) |
-|unitCode |yes | - |Unit Code Address (5 Bit) |
-|enableVerbose |no | `false` | Set to `true` to enable verbose mode |
+| Name         | Optional | Type        | Description                           |
+| ------------ | -------- | ----------- | ------------------------------------- |
+|accessory     |no        |`"Brematic"` |Fixed value to use this plugin         |
+|name          |no        |`String`     |Name of the Device                     |
+|host          |no        |`String`     |Hostname of your gateway               |
+|port          |no        |`int`        |Port of your gateway, usually 49880    |
+|vendor        |no        |`String`     |Name of vendor (See Supported Devices) |
+|device        |no        |`String`     |Name of device (See Supported Devices) |
+|systemCode    |no        |`String`     |System Code Address (5 Bit)            |
+|unitCode      |no        |`String`     |Unit Code Address (5 Bit)              |
+|enableVerbose |yes       |`bool`       | Set to `true` to enable verbose mode  |
 
 ## Example:
 ```json
