@@ -134,7 +134,7 @@ brematicAccessory.prototype.getState = function (callback) {
     var accessory = this;
 
     accessory.log('State of ' + accessory.name + ' fetching');
-    callback(null, true);
+    callback(null, false);
     /*
      var command = accessory['stateCommand'];
 
