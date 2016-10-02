@@ -108,7 +108,6 @@ function brematicAccessory(log, config) {
 
 
 brematicAccessory.prototype.setState = function (givenState, callback) {
-    console.trace('setState');
     var accessory = this;
 
     var targetState = Boolean(givenState);
@@ -138,7 +137,6 @@ brematicAccessory.prototype.setState = function (givenState, callback) {
 };
 
 brematicAccessory.prototype.getState = function (callback) {
-    console.trace('getState');
 
     var accessory = this;
 
@@ -152,7 +150,6 @@ brematicAccessory.prototype.getState = function (callback) {
 };
 
 brematicAccessory.prototype.getServices = function () {
-    console.trace('getServices');
     var accessory = this;
 
     accessory.log(accessory.name + ' - getServices');
