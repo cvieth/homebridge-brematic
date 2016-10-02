@@ -49,7 +49,7 @@ function encodeMessage(system, unit, state) {
     }
     var msgU = msg;
 
-    if (state == "on") {
+    if (state) {
         var message = HEAD + bitLow + "," + msgM + msgU + bitHigh + "," + AN + TAILAN;
     } else {
         var message = HEAD + bitLow + "," + msgM + msgU + bitHigh + "," + AN + TAILAUS;
@@ -67,48 +67,86 @@ module.exports = function (homebridge) {
 };
 
 function brematicAccessory(log, config) {
-    this.log = log;
+    var accessory = this;
 
-    this.log("Init...");
+    accessory.log = log;
+    accessory.log("Initializing Brematic accessory ...");
 
-    this.service = 'Switch';
+    // Fetch Configuration
+    accessory.name = config.name;
+    accessory.host = config.host;
+    accessory.port = config.port;
+    accessory.device = config.device;
+    accessory.systemCode = config.systemCode;
+    accessory.unitCode = config.unitCode;
 
-    // Fetch Configruration
-    this.name = config.name;
-    this.host = config.host;
-    this.port = config.port;
-    this.device = config.device;
-    this.systemCode = config.systemCode;
-    this.unitCode = config.unitCode;
+    /**
+     * Enable or disable verbose output
+     * @type {boolean}
+     */
+    if (config.hasOwnProperty('enableVerbose') && config.enableVerbose === true) {
+        accessory.verbose = true;
+    } else {
+        accessory.verbose = false;
+    }
+
+
+    /**
+     * Current state of accessory
+     * @type {boolean}
+     */
+    accessory.currentState = false;
+    accessory.setState(accessory.currentState, function () {
+    });
+
+    /**
+     * Ensures that the last known state is valid
+     * @type {boolean}
+     */
+    accessory.ensureState = true;
 }
 
 
-brematicAccessory.prototype.setState = function (powerOn, callback) {
+brematicAccessory.prototype.setState = function (givenState, callback) {
     var accessory = this;
-    var state = powerOn ? 'on' : 'off';
-    var prop = state + 'Command';
-    var command = accessory[prop];
 
-    accessory.log('Setting ' + accessory.name + ' to ' + state);
+    var targetState = Boolean(givenState);
+    accessory.log('Target state: ' + targetState.toString());
 
-    var message = encodeMessage(this.systemCode, this.unitCode, state);
+    // Create Message
+    var message = encodeMessage(this.systemCode, this.unitCode, targetState);
+
     var dgram = require('dgram');
     var buffer = new Buffer(message);
 
     var client = dgram.createSocket('udp4');
     client.send(buffer, 0, buffer.length, accessory.port, accessory.host, function (err, bytes) {
         if (err) throw err;
-        accessory.log('UDP message sent to ' + accessory.host + ':' + accessory.port + ' >> ' + message);
-        callback(null);
         client.close();
+
+        if (accessory.verbose) {
+            accessory.log('UDP Datagram sent to ' + accessory.host + ':' + accessory.port + ' >> ' + message);
+        }
+
+        // Store current state
+        accessory.currentState = targetState;
+
+        // Execute callback
+        callback(null);
     });
 };
 
 brematicAccessory.prototype.getState = function (callback) {
+
     var accessory = this;
 
-    accessory.log('State of ' + accessory.name + ' fetching');
-    callback(null, false);
+    accessory.log('Current state is:' + accessory.currentState.toString());
+    callback(null, accessory.currentState);
+
+    if (accessory.ensureState) {
+        accessory.setState(accessory.currentState, function () {
+        });
+    }
 };
 
 brematicAccessory.prototype.getServices = function () {
