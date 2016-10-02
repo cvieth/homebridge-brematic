@@ -3,7 +3,6 @@ function encodeMessage(system, unit, state) {
     var sG = 0;
 
     var sRepeat = 15;
-    var sRepeat = 15;
     var sPause = 5600;
     var sTune = 350;
     var sBaud = 25;
@@ -83,16 +82,6 @@ function brematicAccessory(log, config) {
     this.unitCode = config.unitCode;
 }
 
-/*
- brematicAccessory.prototype.matchesString = function (match) {
- if (this.exactMatch) {
- return (match === this.onValue);
- }
- else {
- return (match.indexOf(this.onValue) > -1);
- }
- }
- */
 
 brematicAccessory.prototype.setState = function (powerOn, callback) {
     var accessory = this;
@@ -113,21 +102,6 @@ brematicAccessory.prototype.setState = function (powerOn, callback) {
         callback(null);
         client.close();
     });
-
-
-    /*
-     var stream = ssh(command, accessory.ssh);
-
-     stream.on('error', function (err) {
-     accessory.log('Error: ' + err);
-     callback(err || new Error('Error setting ' + accessory.name + ' to ' + state));
-     });
-
-     stream.on('finish', function () {
-     accessory.log('Set ' + accessory.name + ' to ' + state);
-     callback(null);
-     });
-     */
 };
 
 brematicAccessory.prototype.getState = function (callback) {
@@ -135,29 +109,12 @@ brematicAccessory.prototype.getState = function (callback) {
 
     accessory.log('State of ' + accessory.name + ' fetching');
     callback(null, false);
-    /*
-     var command = accessory['stateCommand'];
-
-     var stream = ssh(command, accessory.ssh);
-
-     stream.on('error', function (err) {
-     accessory.log('Error: ' + err);
-     callback(err || new Error('Error getting state of ' + accessory.name));
-     });
-
-     stream.on('data', function (data) {
-     var state = data.toString('utf-8').trim().toLowerCase();
-     accessory.log('State of ' + accessory.name + ' is: ' + state);
-     callback(null, accessory.matchesString(state));
-     });
-     */
 };
 
 brematicAccessory.prototype.getServices = function () {
     var accessory = this;
 
     accessory.log(accessory.name + ' - getServices');
-
 
     var informationService = new Service.AccessoryInformation();
     var switchService = new Service.Switch(this.name);
