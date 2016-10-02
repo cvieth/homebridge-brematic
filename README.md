@@ -2,7 +2,7 @@
 [![npm version](https://badge.fury.io/js/homebridge-brematic.svg)](https://badge.fury.io/js/homebridge-brematic)
 [![Gitter](https://badges.gitter.im/cvieth/homebridge-brematic.svg)](https://gitter.im/cvieth/homebridge-brematic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
 [![Beerpay](https://beerpay.io/cvieth/homebridge-brematic/badge.svg?style=beer)](https://beerpay.io/cvieth/homebridge-brematic)
-[![Beerpay](https://beerpay.io/cvieth/homebridge-brematic/make-wish.svg)](https://beerpay.io/cvieth/homebridge-brematic?focus=wish)
+[![Beerpay](https://beerpay.io/cvieth/homebridge-brematic/make-wish.svg?style=flat)](https://beerpay.io/cvieth/homebridge-brematic)
 
 Homebridge plugin for Brennenstuhl Brematic Gateway and compatible devices like "Conn Air"
 
