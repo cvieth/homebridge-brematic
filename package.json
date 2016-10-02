@@ -1,6 +1,6 @@
 {
   "name": "homebridge-brematic",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Brennenstuhl Brematic Plugin for homebridge: https://github.com/nfarina/homebridge",
   "scripts": {},
   "repository": {
