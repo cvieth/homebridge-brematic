@@ -13,38 +13,40 @@ module.exports = function (homebridge) {
     homebridge.registerAccessory("homebridge-brematic", "Brematic", Brematic);
 };
 var Brematic = function (log, config) {
-    var gateway = this;
+    var device = this;
 
-    gateway.log = log;
-    gateway.log("Initializing Brematic Gateway ...");
+    device.log = log;
+    device.log("Initializing Brematic Gateway ...");
+
+    device.name = config.name;
 
     // Fetch Configuration
-    gateway.host = config.host;
-    gateway.port = config.port;
+    device.host = config.host;
+    device.port = config.port;
 
+    device.vendor = config.vendor;
+    device.device = config.device;
 
-    gateway.name = config.name;
-    gateway.vendor = config.vendor;
-    gateway.device = config.device;
-    gateway.systemCode = config.systemCode;
-    gateway.unitCode = config.unitCode;
+    var BrematicDriver = device.detectDriver(config.vendor, config.device);
+    device.driver = new BrematicDriver(device.log);
 
-
-    gateway.address = {};
-
-    //@ToDo: Handle all that driver specific addressing stuff
-    var BrematicDriver = gateway.detectDriver(config.vendor, config.device);
-    gateway.driver = new BrematicDriver(gateway.log, gateway.address);
-
+    // Pass address configuration to driver
+    if (config.hasOwnProperty('address')) {
+        // Set address
+        device.driver.setAddress(config.address);
+    } else {
+        // No address configuration set
+        throw Error("No address configuration found!");
+    }
 
     /**
      * Enable or disable verbose output
      * @type {boolean}
      */
     if (config.hasOwnProperty('enableVerbose') && config.enableVerbose === true) {
-        gateway.verbose = true;
+        device.verbose = true;
     } else {
-        gateway.verbose = false;
+        device.verbose = false;
     }
 
 
@@ -52,15 +54,15 @@ var Brematic = function (log, config) {
      * Current state of accessory
      * @type {boolean}
      */
-    gateway.currentState = false;
-    gateway.setState(gateway.currentState, function () {
+    device.currentState = false;
+    device.setState(device.currentState, function () {
     });
 
     /**
      * Ensures that the last known state is valid
      * @type {boolean}
      */
-    gateway.ensureState = true;
+    device.ensureState = true;
 };
 
 /**
@@ -69,7 +71,10 @@ var Brematic = function (log, config) {
  * @param device
  */
 Brematic.prototype.detectDriver = function (vendor, device) {
-    return require("./lib/generic-driver.js");
+    switch (vendor) {
+        default:
+            return require("./lib/generic/driver.js");
+    }
 };
 
 Brematic.prototype.setState = function (givenState, callback) {
@@ -79,7 +84,10 @@ Brematic.prototype.setState = function (givenState, callback) {
     accessory.log('Target state: ' + targetState.toString());
 
     // Create Message
-    var message = accessory.driver.encodeMessage(this.systemCode, this.unitCode, targetState);
+    var message = accessory.driver.encodeMessage(targetState);
+
+    // Store current state
+    accessory.currentState = targetState;
 
     // Send Message
     accessory.sendMessage(message, callback);
@@ -99,9 +107,6 @@ Brematic.prototype.sendMessage = function (message, callback) {
         if (accessory.verbose) {
             accessory.log('UDP Datagram sent to ' + accessory.host + ':' + accessory.port + ' >> ' + message);
         }
-
-        // Store current state
-        accessory.currentState = targetState;
 
         // Execute callback
         callback();
