@@ -6,7 +6,7 @@
 
 Homebridge plugin for Brennenstuhl Brematic Gateway and compatible devices like "Conn Air"
 
-# Installation
+## Installation
 Follow the instruction in [homebridge](https://www.npmjs.com/package/homebridge) for the
 homebridge server installation.
 
@@ -15,7 +15,7 @@ should be installed "globally" by typing:
 
     npm install -g homebridge-brematic
 
-# Configuration
+## Configuration
 
 Brematic Switches will be configured as accessories in your homebridge configuration.
 
@@ -27,11 +27,10 @@ Brematic Switches will be configured as accessories in your homebridge configura
 |port          |no        |`int`        |Port of your gateway, usually 49880    |
 |vendor        |no        |`String`     |Name of vendor (See Supported Devices) |
 |device        |no        |`String`     |Name of device (See Supported Devices) |
-|systemCode    |no        |`String`     |System Code Address (5 Bit)            |
-|unitCode      |no        |`String`     |Unit Code Address (5 Bit)              |
+|address       |no        |`Object`     |Device address depending on driver     |
 |enableVerbose |yes       |`bool`       | Set to `true` to enable verbose mode  |
 
-## Example:
+### Example:
 ```json
 {
  "bridge": {
@@ -50,17 +49,23 @@ Brematic Switches will be configured as accessories in your homebridge configura
       "port": 49880,
       "vendor": "Brennenstuhl",
       "device": "RCS1000N",
-      "systemCode": "00000",
-      "unitCode": "00000" 
+      "address": {
+        "systemCode": "00000",
+        "unitCode": "00000" 
+      }
     }
   ]
 }
 ```
 
-# Supported Devices
+## Supported Devices
 
 Below you can find a list of devices that are currently supported:
 
-  * Brennenstuhl RCS1000N
-  * Pollin 2605
+| Vendor       | Device Name | Driver  |
+| ------------ | ----------- | ------- |
+| Brennenstuhl | RCS1000N    | generic |
+| Pollin       | 2605        | generic |
+
+
 
