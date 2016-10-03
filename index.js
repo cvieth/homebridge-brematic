@@ -1,61 +1,8 @@
-function encodeMessage(system, unit, state) {
-    var sA = 0;
-    var sG = 0;
-
-    var sRepeat = 15;
-    var sPause = 5600;
-    var sTune = 350;
-    var sBaud = 25;
-    var sSpeed = 16;
-
-    var uSleep = 800000;
-
-    var HEAD = "TXP:" + sA + "," + sG + "," + sRepeat + "," + sPause + "," + sTune + "," + sBaud + ",";
-
-    //var TAIL = ",1,1," + sSpeed + ",;";
-    var TAIL = ",3,1," + sSpeed + ",;";
-    var TAILAN = ",1,1," + sSpeed + ",;";
-    var TAILAUS = ",3,1," + sSpeed + ",;";
-    var AN = "1,3,1,3,3";
-    var AUS = "3,1,1,3,1";
-
-    var bitLow = 1;
-    var bitHigh = 3;
-
-    var seqLow = bitHigh + "," + bitHigh + "," + bitLow + "," + bitLow + ",";
-    var seqHgh = bitHigh + "," + bitLow + "," + bitHigh + "," + bitLow + ",";
-
-    var msg = "";
-    var address = system;
-    for (var i = 0, len = address.length; i < len; i++) {
-        var bit = address[i];
-        if (bit == "0") {
-            msg = msg + seqLow;
-        } else {
-            msg = msg + seqHgh;
-        }
-    }
-    var msgM = msg;
-
-    var msg = "";
-    var address = unit;
-    for (var i = 0, len = address.length; i < len; i++) {
-        var bit = address[i];
-        if (bit == "0") {
-            msg = msg + seqLow;
-        } else {
-            msg = msg + seqHgh;
-        }
-    }
-    var msgU = msg;
-
-    if (state == "on") {
-        var message = HEAD + bitLow + "," + msgM + msgU + bitHigh + "," + AN + TAILAN;
-    } else {
-        var message = HEAD + bitLow + "," + msgM + msgU + bitHigh + "," + AN + TAILAUS;
-    }
-    return message;
-}
+/**
+ * Homebridge Brematic Plugin
+ *
+ * @author Christoph Vieth <christoph@vieth.me>
+ */
 
 var Service;
 var Characteristic;
@@ -63,55 +10,129 @@ var Characteristic;
 module.exports = function (homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
-    homebridge.registerAccessory("homebridge-brematic", "Brematic", brematicAccessory);
+    homebridge.registerAccessory("homebridge-brematic", "Brematic", Brematic);
+};
+var Brematic = function (log, config) {
+    var device = this;
+
+    device.log = log;
+    device.log("Initializing Brematic Gateway ...");
+
+    device.name = config.name;
+
+    // Store host configuration
+    device.host = config.host;
+
+    // Store port configuration
+    if (config.hasOwnProperty('port')) {
+        device.port = config.port;
+    } else {
+        device.port = 49880;
+    }
+
+    device.vendor = config.vendor;
+    device.device = config.device;
+
+    var BrematicDriver = device.detectDriver(config.vendor, config.device);
+    device.driver = new BrematicDriver(device.log);
+
+    // Pass address configuration to driver
+    if (config.hasOwnProperty('address')) {
+        // Set address
+        device.driver.setAddress(config.address);
+    } else {
+        // No address configuration set
+        throw Error("No address configuration found!");
+    }
+
+    /**
+     * Enable or disable verbose output
+     * @type {boolean}
+     */
+    if (config.hasOwnProperty('enableVerbose') && config.enableVerbose === true) {
+        device.verbose = true;
+    } else {
+        device.verbose = false;
+    }
+
+
+    /**
+     * Current state of accessory
+     * @type {boolean}
+     */
+    device.currentState = false;
+    device.setState(device.currentState, function () {
+    });
+
+    /**
+     * Ensures that the last known state is valid
+     * @type {boolean}
+     */
+    device.ensureState = true;
 };
 
-function brematicAccessory(log, config) {
-    this.log = log;
+/**
+ * Detect driver required for device
+ * @param vendor
+ * @param device
+ */
+Brematic.prototype.detectDriver = function (vendor, device) {
+    switch (vendor) {
+        default:
+            return require("./lib/generic/driver.js");
+    }
+};
 
-    this.log("Init...");
-
-    this.service = 'Switch';
-
-    // Fetch Configruration
-    this.name = config.name;
-    this.host = config.host;
-    this.port = config.port;
-    this.device = config.device;
-    this.systemCode = config.systemCode;
-    this.unitCode = config.unitCode;
-}
-
-
-brematicAccessory.prototype.setState = function (powerOn, callback) {
+Brematic.prototype.setState = function (givenState, callback) {
     var accessory = this;
-    var state = powerOn ? 'on' : 'off';
-    var prop = state + 'Command';
-    var command = accessory[prop];
 
-    accessory.log('Setting ' + accessory.name + ' to ' + state);
+    var targetState = Boolean(givenState);
+    accessory.log('Target state: ' + targetState.toString());
 
-    var message = encodeMessage(this.systemCode, this.unitCode, state);
+    // Create Message
+    var message = accessory.driver.encodeMessage(targetState);
+
+    // Store current state
+    accessory.currentState = targetState;
+
+    // Send Message
+    accessory.sendMessage(message, callback);
+};
+
+Brematic.prototype.sendMessage = function (message, callback) {
+    var accessory = this;
+
     var dgram = require('dgram');
     var buffer = new Buffer(message);
 
     var client = dgram.createSocket('udp4');
     client.send(buffer, 0, buffer.length, accessory.port, accessory.host, function (err, bytes) {
         if (err) throw err;
-        accessory.log('UDP message sent to ' + accessory.host + ':' + accessory.port + ' >> ' + message);
-        callback(null);
         client.close();
+
+        if (accessory.verbose) {
+            accessory.log('UDP Datagram sent to ' + accessory.host + ':' + accessory.port + ' >> ' + message);
+        }
+
+        // Execute callback
+        callback();
     });
 };
 
-brematicAccessory.prototype.getState = function (callback) {
+Brematic.prototype.getState = function (callback) {
+
     var accessory = this;
 
-    accessory.log('State of ' + accessory.name + ' fetching');
-    callback(null, false);
+    accessory.log('Current state is:' + accessory.currentState.toString());
+    callback(null, accessory.currentState);
+
+    if (accessory.ensureState) {
+        accessory.setState(accessory.currentState, function () {
+        });
+    }
 };
 
-brematicAccessory.prototype.getServices = function () {
+Brematic.prototype.getServices = function () {
     var accessory = this;
 
     accessory.log(accessory.name + ' - getServices');
