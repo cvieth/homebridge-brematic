@@ -81,6 +81,12 @@ Brematic.prototype.setState = function (givenState, callback) {
     // Create Message
     var message = accessory.driver.encodeMessage(this.systemCode, this.unitCode, targetState);
 
+    // Send Message
+    accessory.sendMessage(message, callback);
+};
+
+Brematic.prototype.sendMessage = function (message, callback) {
+    var accessory = this;
 
     var dgram = require('dgram');
     var buffer = new Buffer(message);
@@ -98,10 +104,9 @@ Brematic.prototype.setState = function (givenState, callback) {
         accessory.currentState = targetState;
 
         // Execute callback
-        callback(null);
+        callback();
     });
 };
-
 
 Brematic.prototype.getState = function (callback) {
 
