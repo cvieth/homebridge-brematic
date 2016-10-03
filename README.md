@@ -6,7 +6,7 @@
 
 Homebridge plugin for Brennenstuhl Brematic Gateway and compatible devices like "Conn Air"
 
-# Installation
+## Installation
 Follow the instruction in [homebridge](https://www.npmjs.com/package/homebridge) for the
 homebridge server installation.
 
@@ -15,23 +15,24 @@ should be installed "globally" by typing:
 
     npm install -g homebridge-brematic
 
-# Configuration
+## Configuration
 
 Brematic Switches will be configured as accessories in your homebridge configuration.
 
-| Name | Mandetory | Default | Description |
-| --- | --- | --- | --- |
-|accessory |yes | - |Must be set to "Brematic" |
-|name |yes | - |Name of the Device |
-|host |yes | - |Hostname of your gateway |
-|port |yes | - |Port of your gateway, usually 49880 |
-|device |yes | - |Name of device (See Supported Devices) |
-|systemCode |yes | - |System Code Address (5 Bit) |
-|unitCode |yes | - |Unit Code Address (5 Bit) |
-|enableVerbose |no | `false` | Set to `true` to enable verbose mode |
+| Name         | Optional | Type        | Description                           |
+| ------------ | -------- | ----------- | ------------------------------------- |
+|accessory     |no        |`"Brematic"` |Fixed value to use this plugin         |
+|name          |no        |`String`     |Name of the Device                     |
+|host          |no        |`String`     |Hostname of your gateway               |
+|port          |yes       |`int`        |Port of your gateway (Usually 49880)   |
+|vendor        |no        |`String`     |Name of vendor (See Supported Devices) |
+|device        |no        |`String`     |Name of device (See Supported Devices) |
+|address       |no        |`Object`     |Device address depending on driver     |
+|enableVerbose |yes       |`bool`       | Set to `true` to enable verbose mode  |
 
-## Example:
+### Example:
 ```json
+{
  "bridge": {
     "name": "Homebridge",
     "username": "CC:22:3D:E3:CE:30",
@@ -46,17 +47,25 @@ Brematic Switches will be configured as accessories in your homebridge configura
       "name": "Example Switch",
       "host": "192.168.0.100",
       "port": 49880,
-      "device": "Brennenstuhl RCS1000N",
-      "systemCode": "00000",
-      "unitCode": "00000" 
+      "vendor": "Brennenstuhl",
+      "device": "RCS1000N",
+      "address": {
+        "systemCode": "00000",
+        "unitCode": "00000" 
+      }
     }
   ]
+}
 ```
 
-# Supported Devices
+## Supported Devices
 
 Below you can find a list of devices that are currently supported:
 
-  * Brennenstuhl RCS1000N
-  * Pollin 2605
+| Vendor       | Device Name | Driver  |
+| ------------ | ----------- | ------- |
+| Brennenstuhl | RCS1000N    | generic |
+| Pollin       | 2605        | generic |
+
+
 
