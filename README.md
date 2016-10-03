@@ -24,7 +24,7 @@ Brematic Switches will be configured as accessories in your homebridge configura
 |accessory     |no        |`"Brematic"` |Fixed value to use this plugin         |
 |name          |no        |`String`     |Name of the Device                     |
 |host          |no        |`String`     |Hostname of your gateway               |
-|port          |no        |`int`        |Port of your gateway, usually 49880    |
+|port          |yes       |`int`        |Port of your gateway (Usually 49880)   |
 |vendor        |no        |`String`     |Name of vendor (See Supported Devices) |
 |device        |no        |`String`     |Name of device (See Supported Devices) |
 |address       |no        |`Object`     |Device address depending on driver     |

@@ -20,9 +20,15 @@ var Brematic = function (log, config) {
 
     device.name = config.name;
 
-    // Fetch Configuration
+    // Store host configuration
     device.host = config.host;
-    device.port = config.port;
+
+    // Store port configuration
+    if (config.hasOwnProperty('port')) {
+        device.port = config.port;
+    } else {
+        device.port = 49880;
+    }
 
     device.vendor = config.vendor;
     device.device = config.device;
