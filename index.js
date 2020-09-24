@@ -68,7 +68,12 @@ var Brematic = function (log, config) {
      * Ensures that the last known state is valid
      * @type {boolean}
      */
-    device.ensureState = true;
+    if (config.hasOwnProperty('ensureState')) {
+        device.ensureState = config.ensureState;
+    } else {
+        device.ensureState = true;
+    }
+    
 };
 
 /**
