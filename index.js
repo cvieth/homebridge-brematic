@@ -12,7 +12,7 @@ module.exports = function (homebridge) {
     Characteristic = homebridge.hap.Characteristic;
     homebridge.registerAccessory("homebridge-brematic", "Brematic", Brematic);
 };
-var Brematic = function (log, config) {
+var Brematic = function (log, config, api) {
     var device = this;
 
     device.log = log;
@@ -29,6 +29,10 @@ var Brematic = function (log, config) {
     } else {
         device.port = 49880;
     }
+    
+    // Init cache
+    this.storage = require('node-persist');
+    this.storage.initSync({ dir: api.user.persistPath() })
 
     device.vendor = config.vendor;
     device.device = config.device;
@@ -60,7 +64,12 @@ var Brematic = function (log, config) {
      * Current state of accessory
      * @type {boolean}
      */
-    device.currentState = false;
+    var state = this.storage.getItemSync(device.name);
+    if (state === undefined) {
+    state = false;
+    }
+    device.currentState = state
+    
     device.setState(device.currentState, function () {
     });
 
@@ -92,6 +101,7 @@ Brematic.prototype.setState = function (givenState, callback) {
     var accessory = this;
 
     var targetState = Boolean(givenState);
+    this.storage.setItemSync(accessory.name, targetState);
     accessory.log('Target state: ' + targetState.toString());
 
     // Create Message
